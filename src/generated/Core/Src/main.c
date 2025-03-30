@@ -21,6 +21,7 @@
 #include "crc.h"
 #include "usb_device.h"
 #include "gpio.h"
+#include "FlasherMonitor.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -91,7 +92,7 @@ int main(void)
   MX_CRC_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+  vFlasherMonitor_main();
   /* USER CODE END 2 */
 
   /* Infinite loop */
