@@ -22,7 +22,7 @@ endif()
 set(CMAKE_PROJECT_NAME Z80FlasherMonitor)
 
 # Include toolchain file
-include("${CMAKE_SOURCE_DIR}/src/generated/cmake/gcc-arm-none-eabi.cmake")
+include("${CMAKE_SOURCE_DIR}/generated/cmake/gcc-arm-none-eabi.cmake")
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -38,7 +38,7 @@ enable_language(C ASM)
 add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
-add_subdirectory(src/generated/cmake/stm32cubemx)
+add_subdirectory(generated/cmake/stm32cubemx)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
