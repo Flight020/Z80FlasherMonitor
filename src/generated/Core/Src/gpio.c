@@ -21,15 +21,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
 
-/* USER CODE BEGIN 0 */
-/* USER CODE END 0 */
-
 /*----------------------------------------------------------------------------*/
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
 
 /** Configure pins as
         * Analog
@@ -131,7 +125,3 @@ void MX_GPIO_Init(void)
   LL_GPIO_SetPinMode(SYSTEMCLK_GPIO_Port, SYSTEMCLK_Pin, LL_GPIO_MODE_INPUT);
 
 }
-
-/* USER CODE BEGIN 2 */
-
-/* USER CODE END 2 */
