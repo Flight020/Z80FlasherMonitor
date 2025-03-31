@@ -76,11 +76,6 @@ typedef struct ReadFromCommand
     uint8_t length;
 } ReadFromCommand_t;
 
-typedef struct NAKResponse
-{
-    Response_t response;
-    uint8_t reason;
-} NAKResponse_t;
 
 typedef struct ACKResponse
 {
@@ -88,5 +83,12 @@ typedef struct ACKResponse
     uint8_t length;
     uint8_t data[62];
 } ACKResponse_t;
+
+typedef struct NAKResponse
+{
+    Response_t response;
+    uint8_t reason;
+} NAKResponse_t;
+
 
 #endif

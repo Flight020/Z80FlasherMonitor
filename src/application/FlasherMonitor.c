@@ -19,7 +19,7 @@ static SL_CommandPrototype_t command = {0};
 static SL_ResponsePrototype_t response = {0};
 
 //Static Functions
-static void FM_vSetState(FM_State_t);
+static void FM_vSetState(SetStateCommand_t* command, SL_ResponsePrototype_t* response);
 static void FM_vProcessCommand(SL_CommandPrototype_t*, SL_ResponsePrototype_t*);
 
 
@@ -42,22 +42,36 @@ void FM_vFlasherMonitor_main(void)
 }
 
 
-static void FM_vSetState(FM_State_t state)
+static void FM_vSetState(SetStateCommand_t* command, SL_ResponsePrototype_t* response)
 {
-    switch(state)
+    switch(command->state)
     {
         case eFlasher:
-        //TODO: Implement FL_SetActive()
-        FM_state = state;
+        {
+            //TODO: Implement FL_SetActive()
+            FM_state = command->state;
+            ACKResponse_t* ACK_Response = (ACKResponse_t*) response;
+            ACK_Response->response = eACK;
+            ACK_Response->length = 0;
+        }
         break;
         
         case eMonitor:
-        //TODO: Implement MN_SetActive()
-        FM_state = state;
+        {
+            //TODO: Implement MN_SetActive()
+            FM_state = command->state;
+            ACKResponse_t* ACK_Response = (ACKResponse_t*) response;
+            ACK_Response->response = eACK;
+            ACK_Response->length = 0;
+        }
         break;
         
         default:
-        //Invalid state, do nothing
+        {
+            NAKResponse_t* NAK_Response = (NAKResponse_t*) response;
+            NAK_Response->response = eNAK;
+            NAK_Response->reason = eInvalidState;
+        }
         break;
     }
 }
@@ -67,20 +81,7 @@ void FM_vProcessCommand(SL_CommandPrototype_t* command, SL_ResponsePrototype_t* 
     switch(command->command)
     {
         case eSetState:
-            {
-                SetStateCommand_t* state_command = (SetStateCommand_t*) command;
-                if(state_command->state == eInitial)
-                {
-                   //Can't return to initial state
-                   NAKResponse_t* NAK_Response = (NAKResponse_t*) response;
-                   NAK_Response->response = eNAK;
-                   NAK_Response->reason = eInvalidState;
-                }
-                FM_vSetState(state_command->state);
-                ACKResponse_t* ACK_Response = (ACKResponse_t*) response;
-                ACK_Response->response = eACK;
-                ACK_Response->length = 0;
-            }
+                FM_vSetState((SetStateCommand_t*)command, response);
         break;
 
         case eSetPC:
