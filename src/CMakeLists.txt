@@ -49,12 +49,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     ${CMAKE_SOURCE_DIR}/application/FlasherMonitor.c
+    ${CMAKE_SOURCE_DIR}/application/SerialLink.c
+    ${CMAKE_SOURCE_DIR}/application/Flasher.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/application
+    ${CMAKE_SOURCE_DIR}/generated/USB_DEVICE/App
 )
 
 # Add project symbols (macros)

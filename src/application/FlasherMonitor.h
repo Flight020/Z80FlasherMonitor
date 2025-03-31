@@ -2,7 +2,7 @@
 #define FLASHER_MONITOR_H
 
 
-void vFlasherMonitor_main(void);
+void FM_vFlasherMonitor_main(void);
 
 
 #endif

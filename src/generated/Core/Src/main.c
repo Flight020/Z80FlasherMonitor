@@ -42,7 +42,7 @@ int main(void)
   MX_CRC_Init();
   MX_USB_DEVICE_Init();
   
-  vFlasherMonitor_main();
+  FM_vFlasherMonitor_main();
   
 
   /* Infinite loop */
