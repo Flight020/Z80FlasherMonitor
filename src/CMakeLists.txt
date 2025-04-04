@@ -51,6 +51,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/application/FlasherMonitor.c
     ${CMAKE_SOURCE_DIR}/application/SerialLink.c
     ${CMAKE_SOURCE_DIR}/application/Flasher.c
+    ${CMAKE_SOURCE_DIR}/application/BusState.c
 )
 
 # Add include paths
