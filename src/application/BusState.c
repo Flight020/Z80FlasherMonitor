@@ -345,13 +345,19 @@ static void BS_SetDataBusDirection(BS_Direction_t direction)
         LL_GPIO_SetPinMode(DATA_PORT, DATA6_Pin, LL_GPIO_MODE_INPUT);
         LL_GPIO_SetPinMode(DATA_PORT, DATA7_Pin, LL_GPIO_MODE_INPUT);
 
+        HAL_Delay(1);
+
         // Then switch Level Shifter to B -> A
         HAL_GPIO_WritePin(DATADirection_GPIO_Port, DATADirection_Pin, B_A);
+
+        HAL_Delay(1);
     }
     else // eOut
     {
         // First Level Shifter to A -> B
         HAL_GPIO_WritePin(DATADirection_GPIO_Port, DATADirection_Pin, A_B);
+
+        HAL_Delay(1);
 
         // Then MCU to Output
         LL_GPIO_SetPinMode(DATA_PORT, DATA0_Pin, LL_GPIO_MODE_OUTPUT);
@@ -362,6 +368,8 @@ static void BS_SetDataBusDirection(BS_Direction_t direction)
         LL_GPIO_SetPinMode(DATA_PORT, DATA5_Pin, LL_GPIO_MODE_OUTPUT);
         LL_GPIO_SetPinMode(DATA_PORT, DATA6_Pin, LL_GPIO_MODE_OUTPUT);
         LL_GPIO_SetPinMode(DATA_PORT, DATA7_Pin, LL_GPIO_MODE_OUTPUT);
+
+        HAL_Delay(1);
     }
 }
 
@@ -403,13 +411,19 @@ static void BS_SetControlBusDirection(BS_Direction_t direction)
         LL_GPIO_SetPinMode(IOREQ_GPIO_Port, IOREQ_Pin, LL_GPIO_MODE_INPUT);
         LL_GPIO_SetPinMode(MREQ_GPIO_Port, MREQ_Pin, LL_GPIO_MODE_INPUT);
 
+        HAL_Delay(1);
+
         // Then switch Level Shifter to B -> A
         HAL_GPIO_WritePin(CTRLDirection_GPIO_Port, CTRLDirection_Pin, B_A);
+
+        HAL_Delay(1);
     }
     else // eOUT
     {
         // First switch Level Shifter to B -> A
         HAL_GPIO_WritePin(CTRLDirection_GPIO_Port, CTRLDirection_Pin, A_B);
+
+        HAL_Delay(1);
 
         // Then MCU to Input
         LL_GPIO_SetPinMode(CTRL_PORT, ADDR0_Pin, LL_GPIO_MODE_OUTPUT);
@@ -433,5 +447,7 @@ static void BS_SetControlBusDirection(BS_Direction_t direction)
         LL_GPIO_SetPinMode(WR_GPIO_Port, WR_Pin, LL_GPIO_MODE_OUTPUT);
         LL_GPIO_SetPinMode(IOREQ_GPIO_Port, IOREQ_Pin, LL_GPIO_MODE_OUTPUT);
         LL_GPIO_SetPinMode(MREQ_GPIO_Port, MREQ_Pin, LL_GPIO_MODE_OUTPUT);
+
+        HAL_Delay(1);
     }
 }
