@@ -7,6 +7,8 @@
 
 void FL_vSetPC(SetPCCommand_t* command, SL_ResponsePrototype_t* response);
 
+void FL_vSetMaster(SetMasterCommand_t* command, SL_ResponsePrototype_t* response);
+
 void FL_vSetIncrement(SetIncrementCommand_t* command, SL_ResponsePrototype_t* response);
 
 void FL_vWrite(WriteCommand_t* command, SL_ResponsePrototype_t* response);

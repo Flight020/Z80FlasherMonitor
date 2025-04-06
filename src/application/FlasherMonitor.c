@@ -88,6 +88,10 @@ void FM_vProcessCommand(SL_CommandPrototype_t* command, SL_ResponsePrototype_t* 
             FL_vSetPC((SetPCCommand_t*)command, response);
         break;
 
+        case eSetMaster:
+            FL_vSetMaster((SetMasterCommand_t*)command, response);
+        break;
+
         case eSetIncrement:
             FL_vSetIncrement((SetIncrementCommand_t*)command, response);
         break;

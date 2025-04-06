@@ -14,6 +14,7 @@ typedef enum
 {
     eSetState,
     eSetPC,
+    eSetMaster,
     eSetIncrement,
     eWrite,
     eRead,
@@ -40,6 +41,12 @@ typedef struct setPCCommand
     Command_t command;
     uint16_t pc;
 } SetPCCommand_t;
+
+typedef struct setMaster
+{
+    Command_t command;
+    bool master;
+} SetMasterCommand_t;
 
 typedef struct setIncrementCommand
 {

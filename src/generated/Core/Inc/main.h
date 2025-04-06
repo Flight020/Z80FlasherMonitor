@@ -40,7 +40,8 @@ extern "C" {
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
-/* Private defines -----------------------------------------------------------*/
+#define ADDRESS_PORT GPIOC
+#define DATA_PORT GPIOA
 #define ADDR13_Pin LL_GPIO_PIN_13
 #define ADDR13_GPIO_Port GPIOC
 #define ADDR14_Pin LL_GPIO_PIN_14
