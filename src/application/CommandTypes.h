@@ -30,11 +30,11 @@ typedef enum
     eInvalidState
 } NAK_Reason_t;
 
-typedef struct setStateCommand
+typedef struct setModeCommand
 {
     Command_t command;
-    uint8_t state;
-} SetStateCommand_t;
+    uint8_t mode;
+} SetModeCommand_t;
 
 typedef struct setPCCommand
 {

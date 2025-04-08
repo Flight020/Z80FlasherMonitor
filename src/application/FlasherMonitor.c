@@ -11,15 +11,15 @@ typedef enum
     eFlasher,
     eMonitor,
     eInitial
-} FM_State_t;
+} FM_Mode_t;
 
 //Static Fields
-static FM_State_t FM_state = eInitial;
+static FM_Mode_t FM_mode = eInitial;
 static SL_CommandPrototype_t command = {0};
 static SL_ResponsePrototype_t response = {0};
 
 //Static Functions
-static void FM_vSetState(SetStateCommand_t* command, SL_ResponsePrototype_t* response);
+static void FM_vSetState(SetModeCommand_t* command, SL_ResponsePrototype_t* response);
 static void FM_vProcessCommand(SL_CommandPrototype_t*, SL_ResponsePrototype_t*);
 
 
@@ -42,14 +42,14 @@ void FM_vFlasherMonitor_main(void)
 }
 
 
-static void FM_vSetState(SetStateCommand_t* command, SL_ResponsePrototype_t* response)
+static void FM_vSetMode(SetModeCommand_t* command, SL_ResponsePrototype_t* response)
 {
-    switch(command->state)
+    switch(command->mode)
     {
         case eFlasher:
         {
             //TODO: Implement FL_SetActive()
-            FM_state = command->state;
+            FM_mode = command->mode;
             ACKResponse_t* ACK_Response = (ACKResponse_t*) response;
             ACK_Response->response = eACK;
             ACK_Response->length = 0;
@@ -59,7 +59,7 @@ static void FM_vSetState(SetStateCommand_t* command, SL_ResponsePrototype_t* res
         case eMonitor:
         {
             //TODO: Implement MN_SetActive()
-            FM_state = command->state;
+            FM_mode = command->mode;
             ACKResponse_t* ACK_Response = (ACKResponse_t*) response;
             ACK_Response->response = eACK;
             ACK_Response->length = 0;
@@ -81,7 +81,7 @@ void FM_vProcessCommand(SL_CommandPrototype_t* command, SL_ResponsePrototype_t* 
     switch(command->command)
     {
         case eSetState:
-                FM_vSetState((SetStateCommand_t*)command, response);
+                FM_vSetMode((SetModeCommand_t*)command, response);
         break;
 
         case eSetPC:
