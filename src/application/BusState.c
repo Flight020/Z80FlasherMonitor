@@ -28,11 +28,11 @@ static BS_Configuration_t BS_config =
         .busAquired = false};
 
 // Event Handler for each state
-static bool BS_State_Slave_HandleEvent(BS_Event_t event);
-static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event);
-static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event);
-static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event);
-static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event);
+static bool BS_State_Slave_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards);
+static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards);
+static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards);
+static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards);
+static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards);
 
 // Control functions for the buses
 static void BS_AquireBus();
@@ -49,31 +49,32 @@ BS_State_t BS_getState(void)
 
 /// @brief Set a new event to be handled by the Bus State FSM
 /// @param event The new event input
+/// @param guards Transition guards for state transitions
 /// @return
-bool BS_setEvent(BS_Event_t event)
+bool BS_setEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
     bool result = false;
 
     switch (BS_config.state)
     {
     case eSlave:
-        result = BS_State_Slave_HandleEvent(event);
+        result = BS_State_Slave_HandleEvent(event, guards);
         break;
 
     case eReadDirect:
-        result = BS_State_ReadDirect_HandleEvent(event);
+        result = BS_State_ReadDirect_HandleEvent(event, guards);
         break;
 
     case eWriteDirect:
-        result = BS_State_WriteDirect_HandleEvent(event);
+        result = BS_State_WriteDirect_HandleEvent(event, guards);
         break;
 
     case eReadMaster:
-        result = BS_State_ReadMaster_HandleEvent(event);
+        result = BS_State_ReadMaster_HandleEvent(event, guards);
         break;
 
     case eWriteMaster:
-        result = BS_State_WriteMaster_HandleEvent(event);
+        result = BS_State_WriteMaster_HandleEvent(event, guards);
         break;
 
     default:
@@ -88,10 +89,11 @@ bool BS_setEvent(BS_Event_t event)
  * @brief Event handler for eSlave state
  *
  * @param event Input event to handle
+ * @param guards Transition guards for state transitions
  * @return true if event was valid
  * @return false if event was invalid
  */
-static bool BS_State_Slave_HandleEvent(BS_Event_t event)
+static bool BS_State_Slave_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
     bool result = true;
     switch (event)
@@ -100,28 +102,34 @@ static bool BS_State_Slave_HandleEvent(BS_Event_t event)
         // Do nothing
         break;
 
-    case eSetDirectRead:
-        BS_SetControlBusDirection(eOUT);
-        BS_config.state = eReadDirect;
+    case eSetRead:
+        if (guards.master_guard == false)
+        {
+            BS_SetControlBusDirection(eOUT);
+            BS_config.state = eReadDirect;
+        }
+        else
+        {
+            BS_AquireBus();
+            BS_SetControlBusDirection(eOUT);
+            BS_config.state = eReadMaster;
+        }
         break;
 
-    case eSetDirectWrite:
-        BS_SetControlBusDirection(eOUT);
-        BS_SetDataBusDirection(eOUT);
-        BS_config.state = eWriteDirect;
-        break;
-
-    case eSetMasterRead:
-        BS_AquireBus();
-        BS_SetControlBusDirection(eOUT);
-        BS_config.state = eReadMaster;
-        break;
-
-    case eSetMasterWrite:
-        BS_AquireBus();
-        BS_SetControlBusDirection(eOUT);
-        BS_SetDataBusDirection(eOUT);
-        BS_config.state = eWriteMaster;
+    case eSetWrite:
+        if (guards.master_guard == false)
+        {
+            BS_SetControlBusDirection(eOUT);
+            BS_SetDataBusDirection(eOUT);
+            BS_config.state = eWriteDirect;
+        }
+        else
+        {
+            BS_AquireBus();
+            BS_SetControlBusDirection(eOUT);
+            BS_SetDataBusDirection(eOUT);
+            BS_config.state = eWriteMaster;
+        }
         break;
 
     default:
@@ -135,11 +143,13 @@ static bool BS_State_Slave_HandleEvent(BS_Event_t event)
  * @brief Event handler for eWriteDirect state
  *
  * @param event Input event to handle
+ * @param guards Transition guards for state transitions
  * @return true if event was valid
  * @return false if event was invalid
  */
-static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event)
+static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
+    (void)guards; //Unused
     bool result = true;
     switch (event)
     {
@@ -149,18 +159,15 @@ static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event)
         BS_config.state = eSlave;
         break;
 
-    case eSetDirectRead:
+    case eSetRead:
         BS_SetDataBusDirection(eIN);
         BS_config.state = eReadDirect;
         break;
 
-    case eSetDirectWrite:
+    case eSetWrite:
         // Do Nothing
         break;
 
-    // No transition between Direct and Master states
-    case eSetMasterRead:
-    case eSetMasterWrite:
     default:
         result = false;
         break;
@@ -172,11 +179,13 @@ static bool BS_State_WriteDirect_HandleEvent(BS_Event_t event)
  * @brief Event handler for eReadDirect state
  *
  * @param event Input event to handle
+ * @param guards Transition guards for state transitions
  * @return true if event was valid
  * @return false if event was invalid
  */
-static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event)
+static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
+    (void)guards; //Unused
     bool result = false;
     switch (event)
     {
@@ -185,18 +194,15 @@ static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event)
         BS_config.state = eSlave;
         break;
 
-    case eSetDirectRead:
+    case eSetRead:
         // Do Nothing
         break;
 
-    case eSetDirectWrite:
+    case eSetWrite:
         BS_SetDataBusDirection(eOUT);
         BS_config.state = eWriteDirect;
         break;
 
-    // No transition between Direct and Master states
-    case eSetMasterRead:
-    case eSetMasterWrite:
     default:
         result = false;
         break;
@@ -208,11 +214,13 @@ static bool BS_State_ReadDirect_HandleEvent(BS_Event_t event)
  * @brief Event handler for eWriteMaster state
  *
  * @param event Input event to handle
+ * @param guards Transition guards for state transitions
  * @return true if event was valid
  * @return false if event was invalid
  */
-static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event)
+static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
+    (void)guards; //Unused
     bool result = false;
     switch (event)
     {
@@ -223,18 +231,15 @@ static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event)
         BS_config.state = eSlave;
         break;
 
-    case eSetMasterRead:
+    case eSetRead:
         BS_SetDataBusDirection(eIN);
         BS_config.state = eReadMaster;
         break;
 
-    case eSetMasterWrite:
+    case eSetWrite:
         // Do Nothing
         break;
 
-    // No transition between Direct and Master states
-    case eSetDirectRead:
-    case eSetDirectWrite:
     default:
         result = false;
         break;
@@ -246,11 +251,13 @@ static bool BS_State_WriteMaster_HandleEvent(BS_Event_t event)
  * @brief Event handler for eReadMaster state
  *
  * @param event Input event to handle
+ * @param guards Transition guards for state transitions
  * @return true if event was valid
  * @return false if event was invalid
  */
-static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event)
+static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event, BS_TransitionGuards_t guards)
 {
+    (void)guards; //Unused
     bool result = false;
     switch (event)
     {
@@ -260,17 +267,16 @@ static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event)
         BS_config.state = eSlave;
         break;
 
-    case eSetMasterRead:
-
+    case eSetRead:
+        // Do nothing
         break;
 
-    case eSetMasterWrite:
-
+    case eSetWrite:
+        BS_SetControlBusDirection(eOUT);
+        BS_SetDataBusDirection(eOUT);
+        BS_config.state = eWriteMaster;
         break;
 
-    // No transition between Direct and Master states
-    case eSetDirectRead:
-    case eSetDirectWrite:
     default:
         result = false;
         break;
@@ -284,17 +290,17 @@ static bool BS_State_ReadMaster_HandleEvent(BS_Event_t event)
  */
 static void BS_AquireBus()
 {
-    if(BS_config.busAquired)
+    if (BS_config.busAquired)
     {
-        //Nothing to do
+        // Nothing to do
         return;
     }
 
-    //Request Bus Control
+    // Request Bus Control
     HAL_GPIO_WritePin(BUSRQ_GPIO_Port, BUSRQ_Pin, GPIO_PIN_RESET);
 
-    //Wait for transfer of control
-    while(HAL_GPIO_ReadPin(BUSACK_GPIO_Port, BUSACK_Pin) == GPIO_PIN_SET)
+    // Wait for transfer of control
+    while (HAL_GPIO_ReadPin(BUSACK_GPIO_Port, BUSACK_Pin) == GPIO_PIN_SET)
     {
         HAL_Delay(1);
     }
@@ -309,9 +315,9 @@ static void BS_AquireBus()
  */
 static void BS_ReleaseBus()
 {
-    if(BS_config.busAquired == false)
+    if (BS_config.busAquired == false)
     {
-        //Nothing to do
+        // Nothing to do
         return;
     }
 

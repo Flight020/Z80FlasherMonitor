@@ -16,15 +16,17 @@ typedef enum
 typedef enum
 {
     eSetSlave,
-    eSetDirectRead,
-    eSetDirectWrite,
-    eSetMasterRead,
-    eSetMasterWrite
+    eSetRead,
+    eSetWrite
 } BS_Event_t;
 
+typedef struct BS_transitionguards
+{
+    bool master_guard;
+} BS_TransitionGuards_t;
 
 BS_State_t BS_getState(void);
-bool BS_setEvent(BS_Event_t event);
+bool BS_setEvent(BS_Event_t event, BS_TransitionGuards_t guards);
 
 
 #endif

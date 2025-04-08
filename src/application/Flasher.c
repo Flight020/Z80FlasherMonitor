@@ -58,17 +58,11 @@ void FL_vWrite(WriteCommand_t* command, SL_ResponsePrototype_t* response)
 {
     NAKResponse_t* NAK = (NAKResponse_t*) response;
     ACKResponse_t* ACK = (ACKResponse_t*) response;
+    BS_TransitionGuards_t guards = {.master_guard = flasherState.master};
     bool result = true;
 
     //Set Bus State depending based on master flag indicating presence of other bus master
-    if((flasherState.master == false) &&(BS_getState() != eWriteDirect))
-    {
-        result = BS_setEvent(eSetDirectWrite);
-    }
-    else if((flasherState.master == true) && (BS_getState() != eWriteMaster))
-    {
-        result = BS_setEvent(eSetMasterWrite);
-    }
+    result = BS_setEvent(eSetWrite, guards);
 
     //Check if state change was successful
     if(result == false)
@@ -101,7 +95,7 @@ void FL_vWrite(WriteCommand_t* command, SL_ResponsePrototype_t* response)
     //Return bus control back to other master
     if(flasherState.master)
     {
-        BS_setEvent(eSetSlave);
+        BS_setEvent(eSetSlave, guards);
     }
 
     ACK->response = eACK;
@@ -116,17 +110,11 @@ void FL_vRead(ReadCommand_t* command, SL_ResponsePrototype_t* response)
 {
     NAKResponse_t* NAK = (NAKResponse_t*) response;
     ACKResponse_t* ACK = (ACKResponse_t*) response;
+    BS_TransitionGuards_t guards = {.master_guard = flasherState.master};
     bool result = true;
 
     //Set Bus State depending based on master flag indicating presence of other bus master
-    if((flasherState.master == false) &&(BS_getState() != eReadDirect))
-    {
-        result = BS_setEvent(eSetDirectRead);
-    }
-    else if((flasherState.master == true) && (BS_getState() != eReadMaster))
-    {
-        result = BS_setEvent(eSetMasterRead);
-    }
+     result = BS_setEvent(eSetRead, guards);
 
     //Check if state change was successful
     if(result == false)
@@ -159,7 +147,7 @@ void FL_vRead(ReadCommand_t* command, SL_ResponsePrototype_t* response)
     //Return bus control back to other master
     if(flasherState.master)
     {
-        BS_setEvent(eSetSlave);
+        BS_setEvent(eSetSlave, guards);
     }
 
     ACK->response = eACK;
@@ -174,17 +162,11 @@ void FL_vWriteAt(WriteAtCommand_t* command, SL_ResponsePrototype_t* response)
 {
     NAKResponse_t* NAK = (NAKResponse_t*) response;
     ACKResponse_t* ACK = (ACKResponse_t*) response;
+    BS_TransitionGuards_t guards = {.master_guard = flasherState.master};
     bool result = true;
 
     //Set Bus State depending based on master flag indicating presence of other bus master
-    if((flasherState.master == false) &&(BS_getState() != eWriteDirect))
-    {
-        result = BS_setEvent(eSetDirectWrite);
-    }
-    else if((flasherState.master == true) && (BS_getState() != eWriteMaster))
-    {
-        result = BS_setEvent(eSetMasterWrite);
-    }
+    result = BS_setEvent(eSetWrite, guards);
 
     //Check if state change was successful
     if(result == false)
@@ -212,7 +194,7 @@ void FL_vWriteAt(WriteAtCommand_t* command, SL_ResponsePrototype_t* response)
     //Return bus control back to other master
     if(flasherState.master)
     {
-        BS_setEvent(eSetSlave);
+        BS_setEvent(eSetSlave, guards);
     }
 
     ACK->response = eACK;
@@ -227,17 +209,11 @@ void FL_vReadFrom(ReadFromCommand_t* command, SL_ResponsePrototype_t* response)
 {
     NAKResponse_t* NAK = (NAKResponse_t*) response;
     ACKResponse_t* ACK = (ACKResponse_t*) response;
+    BS_TransitionGuards_t guards = {.master_guard = flasherState.master};
     bool result = true;
 
     //Set Bus State depending based on master flag indicating presence of other bus master
-    if((flasherState.master == false) &&(BS_getState() != eReadDirect))
-    {
-        result = BS_setEvent(eSetDirectRead);
-    }
-    else if((flasherState.master == true) && (BS_getState() != eReadMaster))
-    {
-        result = BS_setEvent(eSetMasterRead);
-    }
+    result = BS_setEvent(eSetRead, guards);
 
     //Check if state change was successful
     if(result == false)
@@ -265,7 +241,7 @@ void FL_vReadFrom(ReadFromCommand_t* command, SL_ResponsePrototype_t* response)
     //Return bus control back to other master
     if(flasherState.master)
     {
-        BS_setEvent(eSetSlave);
+        BS_setEvent(eSetSlave, guards);
     }
 
     ACK->response = eACK;
